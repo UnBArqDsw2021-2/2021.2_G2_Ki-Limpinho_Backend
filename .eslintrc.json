@@ -1,11 +1,16 @@
 {
     "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "parserOptions": {
-        "ecmaVersion": 13
-    },
+        "node": true,
+        "mocha": true,
+        "es6": true
+      },
+      "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "experimentalObjectRestSpread": true
+        }
+      },
     "rules": {
     }
 }
