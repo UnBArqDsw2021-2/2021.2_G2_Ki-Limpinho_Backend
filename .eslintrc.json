@@ -1,0 +1,11 @@
+{
+    "env": {
+        "browser": true,
+        "esNext": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 13
+    },
+    "rules": {
+    }
+}
