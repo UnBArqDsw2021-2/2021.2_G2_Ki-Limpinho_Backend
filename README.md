@@ -81,12 +81,12 @@ cd 2021.2_G2_Ki-Limpinho_Backend
 ```
 
 Subindo o container docker:
-```js
+```sh
 docker-compose up
 ```
 
-Pronto, agora você já pode acessar a REST APT do projeto de Ki-limpinho, o acesso está disponível pela porta 4040. 
+Pronto, agora você já pode acessar a REST APT do projeto de Ki-limpinho, o acesso estará disponível pela porta 4040.
 
-Entre em seu navegador padrão e <http://localhost:4040>
+Entre em seu navegador padrão pela porta <http://localhost:4040>.
 
 Obrigado por contribuir para a ki-limpinho, qualquer dúvida fale com a nossa equipe.
