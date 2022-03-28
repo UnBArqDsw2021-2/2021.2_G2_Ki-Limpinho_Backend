@@ -44,6 +44,13 @@ const apiAuth = {
       return next(err);
     }
   },
+
+  isAdmin(req, res, next) {
+    const email = req.body.email;
+    return res.json({
+      isAdmin: email === config.email
+    });
+  }
 };
 
 module.exports = apiAuth;
