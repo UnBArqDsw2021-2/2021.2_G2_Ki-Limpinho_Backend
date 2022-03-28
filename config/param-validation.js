@@ -29,10 +29,4 @@ module.exports = {
       // password: Joi.string().required()
     }
   },
-
-  isAdmin: {
-    body: {
-      
-    }
-  }
 };

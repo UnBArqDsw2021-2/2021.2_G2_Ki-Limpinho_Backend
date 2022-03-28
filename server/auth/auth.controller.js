@@ -17,13 +17,14 @@ const apiAuth = {
     try {
       const user = await User.find({ email: userRequest.email });
 
-      if (userRequest.senha === user.senha) {
+      if (userRequest.senha === user[0].senha) {
         const token = jwt.sign(
           {
-            email: user.email,
+            email: user[0].email,
           },
           config.jwtSecret
         );
+        user[0].isAdmin = user[0].email === config.email;
         return res.json({
           token,
           user: user[0],
@@ -44,13 +45,6 @@ const apiAuth = {
       return next(err);
     }
   },
-
-  isAdmin(req, res, next) {
-    const email = req.body.email;
-    return res.json({
-      isAdmin: email === config.email
-    });
-  }
 };
 
 module.exports = apiAuth;
