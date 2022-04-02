@@ -45,5 +45,8 @@ module.exports = {
       comment: Joi.string(),
       rating: Joi.number(),
     },
+    params: {
+      feedbackId: Joi.string().hex().required(),
+    },
   },
 };

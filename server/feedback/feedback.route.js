@@ -2,7 +2,6 @@ const express = require("express");
 const validate = require("express-validation");
 const paramValidation = require("../../config/param-validation");
 const feedbackCtrl = require("./feedback.controller");
-
 const router = express.Router(); // eslint-disable-line new-cap
 
 router
@@ -14,32 +13,30 @@ router
   .post(validate(paramValidation.createFeedback), feedbackCtrl.create);
 
 router
-  .route("/:feedbackID")
-  /** GET /api/feedbacks/:feedbackID - Get feedback */
+  .route("/:feedbackId")
+  /** GET /api/feedbacks/:feedbackId - Get feedback */
   .get(feedbackCtrl.get)
 
-  /** PATCH /api/feedbacks/:feedbackID - Update feedback */
+  /** PATCH /api/feedbacks/:feedbackId - Update feedback */
   .patch(validate(paramValidation.updateFeedback), feedbackCtrl.update)
 
-  /** DELETE /api/feedbacks/:feedbackID - Delete feedback */
+  /** DELETE /api/feedbacks/:feedbackId - Delete feedback */
   .delete(feedbackCtrl.remove);
 
 router
-  .route("/service/:serviceID")
-  /** GET /api/feedbacks/service/:serviceID - Get feedback by service */
+  .route("/service/:serviceId")
+  /** GET /api/feedbacks/service/:serviceId - Get feedback by service */
   .get(feedbackCtrl.getByService);
 
 router
-  .route("/rating/:serviceID")
-  /** GET /api/feedbacks/rating/:serviceID - Get rating of a service */
+  .route("/rating/:serviceId")
+  /** GET /api/feedbacks/rating/:serviceId - Get rating of a service */
   .get(feedbackCtrl.getRatingByService);
 
 router
-  .route("/user/:userID")
-  /** GET /api/feedbacks/user/:userID - Get feedback by user */
+  .route("/user/:userId")
+  /** GET /api/feedbacks/user/:userId - Get feedback by user */
   .get(feedbackCtrl.getByUser);
 
-/** Load feedback when API with feedbackID route parameter is hit */
-router.param("feedbackID", feedbackCtrl.load);
 
 module.exports = router;

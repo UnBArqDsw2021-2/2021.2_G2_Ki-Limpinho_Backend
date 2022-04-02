@@ -1,28 +1,30 @@
 const Feedback = require("./feedback.model");
+const mongoose = require("mongoose");
 const httpStatus = require("http-status");
 const APIError = require("../helpers/APIError");
 const config = require("../../config/config");
 
+const ObjectId = mongoose.Types.ObjectId;
 const apiFeedback = {
-  /**
-   * Load feedback and append to req.
-   */
-  load(req, res, next, id) {
-    Feedback.get(id)
-      .then((feedback) => {
-        req.feedback = feedback; // eslint-disable-line no-param-reassign
-        return next();
-      })
-      .catch((e) => next(e));
-  },
 
   /**
    * Get feedback
    * @returns {Feedback}
    */
-  get(req, res) {
-    return res.json(req.feedback);
+  async get(req, res, next) {
+    const _idFeedback = req.params.feedbackId;
+
+    try{
+      const result = await Feedback.findById(_idFeedback);
+      if(!result){
+        throw new APIError("No feedback found", httpStatus.NOT_FOUND);
+      }
+      res.status(httpStatus.OK).json(result);
+    }catch(err){
+      next(new APIError(err.message, httpStatus.NOT_FOUND));
+    }
   },
+  
 
   /**
    * Create new feedback
@@ -33,7 +35,13 @@ const apiFeedback = {
    * @returns {Feedback}
    */
   async create(req, res, next) {
-    const feedback = new Feedback(req.body);
+    const { comment, rating, service, ratingBy } = req.body;
+    const feedback = new Feedback({
+      comment: comment,
+      rating:rating,
+      ratingBy: ObjectId(ratingBy),
+      service: ObjectId(service),
+    });
     try {
       const result = await feedback.save();
       res.status(httpStatus.CREATED).json(result);

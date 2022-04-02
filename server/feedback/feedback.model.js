@@ -16,7 +16,6 @@ const FeedbackSchema = new mongoose.Schema({
     min: 1,
     max: 5,
     required: true,
-    validate: { validator: Number.isInteger },
   },
   rantingBy: {
     type: mongoose.Schema.Types.ObjectId,
@@ -86,6 +85,9 @@ FeedbackSchema.statics = {
         return Promise.reject(err);
       });
   },
+
+
+
   /**
    * Get all feedbacks by service
    * @param {ObjectId} idService - The objectId of service.
@@ -113,17 +115,30 @@ FeedbackSchema.statics = {
   getRatingByService(idService) {
     return this.aggregate([
       {
-        $match: {
-          service: ObjectId(idService),
-        },
-      },
-      {
-        $group: {
-          _id: "$service",
-          media: { $avg: "$rating" },
-        },
-      },
-    ]);
+        '$match': {
+          'service': ObjectId(idService)
+        }
+      }, {
+        '$group': {
+          '_id': '$service', 
+          'media': {
+            '$avg': '$rating'
+          }
+        }
+      }
+    ]).allowDiskUse(true)
+      .exec()
+      .then((rating) => {
+        if (rating) {
+          return rating;
+        }
+        const err = new APIError(
+          "No such rating for this service!",
+          httpStatus.NOT_FOUND
+        );
+        return Promise.reject(err);
+      }
+    );
   },
 
   /**
