@@ -17,7 +17,7 @@ const FeedbackSchema = new mongoose.Schema({
     max: 5,
     required: true,
   },
-  rantingBy: {
+  ratingBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -147,7 +147,7 @@ FeedbackSchema.statics = {
    * @returns {Promise<Feedback, APIError>}
    */
   getByUser(idUser) {
-    return this.find({ rantingBy: idUser })
+    return this.find({ ratingBy: idUser })
       .exec()
       .then((feedback) => {
         if (feedback) {
@@ -224,7 +224,7 @@ FeedbackSchema.statics = {
     //   },
     //   {
     //     chave: "comment",
-    //     valor: "Gostei da qualidade do protudo utilizado",
+    //     valor: "Gostei da qualidade do produto utilizado",
     //   }
     // ]
 

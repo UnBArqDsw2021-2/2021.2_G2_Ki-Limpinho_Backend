@@ -11,7 +11,6 @@ chai.config.includeStack = true;
  * root level hooks
  */
 after((done) => {
-  // required because https://github.com/Automattic/mongoose/issues/1251#issuecomment-65793092
   mongoose.models = {};
   mongoose.modelSchemas = {};
   mongoose.connection.close();
@@ -22,16 +21,16 @@ describe("## Feedback APIs", () => {
   let feedback = {
     comment: "Amei a lavagem americana",
     rating: 5,
-    service: "5c9b8b8f9c9d8b3f8c8b4b9f",
+    service: "624786d8b0cb7760736a3d6f",
     ratingBy: "5c9b8b8f9c9d8b3f8c8b4b9f",
   };
 
   describe("# POST /api/feedbacks", () => {
-    it("should create a new feedback", (done) => {
+    it("should create a new feedback",  (done) => {
       request(app)
         .post("/api/feedbacks")
         .send(feedback)
-        .expect(httpStatus.OK)
+        .expect(httpStatus.CREATED)
         .then((res) => {
           expect(res.body.comment).to.equal(feedback.comment);
           expect(res.body.rating).to.equal(feedback.rating);
@@ -71,12 +70,20 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# PUT /api/feedbacks/:feedbackId", () => {
+  describe("# Patch /api/feedbacks/:feedbackId", () => {
+  
     it("should update feedback details", (done) => {
-      feedback.comment = "Odiei a lavagem americana";
+      let update =  { 
+        "updates": [
+           {
+          "chave": "comment",
+          "valor": "Odiei a lavagem americana"
+          }
+        ]
+      }
       request(app)
-        .put(`/api/feedbacks/${feedback._id}`)
-        .send(feedback)
+        .patch(`/api/feedbacks/${feedback._id}`)
+        .send(update)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.comment).to.equal("Odiei a lavagem americana");
@@ -114,6 +121,44 @@ describe("## Feedback APIs", () => {
     });
   });
 
+  
+  describe("# GET /api/feedbacks/service/:serviceId",()=>{
+    it("should get all feedbacks by service", (done) => {
+      request(app)
+        .get(`/api/feedbacks/service/${feedback.service}`)
+        .expect(httpStatus.OK)
+        .then((res) => {
+          expect(res.body).to.be.an("array");
+          done();
+        })
+        .catch(done);
+    });
+  });
+ describe("# GET /api/feedbacks/rating/:serviceId",()=>{
+    it("should get average rating by service", (done) => {
+      request(app)
+        .get(`/api/feedbacks/rating/${feedback.service}`)
+        .expect(httpStatus.OK)
+        .then((res) => {
+          expect(res.body.media).to.equal(5);
+          done();
+        })
+        .catch(done);
+    });
+  });
+
+  describe("# GET /api/feedbacks/user/:userId",()=>{
+    it("should get all feedbacks by user", (done) => {
+      request(app)
+        .get(`/api/feedbacks/user/${feedback.ratingBy}`)
+        .expect(httpStatus.OK)
+        .then((res) => {
+          expect(res.body).to.be.an("array");
+          done();
+        })
+        .catch(done);
+    });
+  });
   describe("# DELETE /api/feedbacks/", () => {
     it("should delete feedback", (done) => {
       request(app)
@@ -127,6 +172,14 @@ describe("## Feedback APIs", () => {
           done();
         })
         .catch(done);
+    });
+    it("should get no content because the feedback already is deleted", (done) => {
+      request(app)
+        .delete(`/api/feedbacks/${feedback._id}`)
+        .expect(httpStatus.NO_CONTENT)
+        .then((res) => {done();})
+        .catch(done);
+
     });
   });
 });

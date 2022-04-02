@@ -15,7 +15,7 @@ const apiFeedback = {
     const _idFeedback = req.params.feedbackId;
 
     try{
-      const result = await Feedback.findById(_idFeedback);
+      const result = await Feedback.get(_idFeedback);
       if(!result){
         throw new APIError("No feedback found", httpStatus.NOT_FOUND);
       }
@@ -113,7 +113,7 @@ const apiFeedback = {
     let result = {};
     try {
       result = await Feedback.getRatingByService(_idService);
-      res.status(httpStatus.OK).json(result);
+      res.status(httpStatus.OK).json(result[0]);
     } catch (error) {
       next(new APIError(error.message));
     }
@@ -149,12 +149,23 @@ const apiFeedback = {
    * Delete feedback.
    * @returns {Feedback}
    */
-  remove(req, res, next) {
-    const feedback = req.feedback;
-    feedback
+  async remove(req, res, next) {
+    const _idFeedback =  req.params.feedbackId;
+    try{
+      const feedback = await Feedback.get(_idFeedback);
+      if(!feedback){
+        throw new APIError("No feedback found", httpStatus.NOT_FOUND);
+      }
+      feedback
       .remove()
-      .then((deletedFeedback) => res.json(deletedFeedback))
-      .catch((e) => next(e));
+      .then((deletedFeedback) => res.status(httpStatus.OK).json(deletedFeedback))
+      .catch(err=>next(new APIError(err.message, httpStatus.expectationFailed)));
+
+    }
+    catch(err){
+      next(new APIError(err.message, httpStatus.NO_CONTENT));
+    }
+
   },
 };
 
