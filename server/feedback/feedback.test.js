@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const request = require("supertest-as-promised");
+const request = require("supertest");
 const httpStatus = require("http-status");
-const chai = require("chai"); // eslint-disable-line import/newline-after-import
+const chai = require("chai");
 const expect = chai.expect;
 const app = require("../../index");
 
@@ -26,7 +26,7 @@ describe("## Feedback APIs", () => {
   };
 
   describe("# POST /api/feedbacks", () => {
-    it("should create a new feedback",  (done) => {
+    it("should create a new feedback", (done) => {
       request(app)
         .post("/api/feedbacks")
         .send(feedback)
@@ -71,16 +71,15 @@ describe("## Feedback APIs", () => {
   });
 
   describe("# Patch /api/feedbacks/:feedbackId", () => {
-  
     it("should update feedback details", (done) => {
-      let update =  { 
-        "updates": [
-           {
-          "chave": "comment",
-          "valor": "Odiei a lavagem americana"
-          }
-        ]
-      }
+      let update = {
+        updates: [
+          {
+            chave: "comment",
+            valor: "Odiei a lavagem americana",
+          },
+        ],
+      };
       request(app)
         .patch(`/api/feedbacks/${feedback._id}`)
         .send(update)
@@ -121,8 +120,7 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  
-  describe("# GET /api/feedbacks/service/:serviceId",()=>{
+  describe("# GET /api/feedbacks/service/:serviceId", () => {
     it("should get all feedbacks by service", (done) => {
       request(app)
         .get(`/api/feedbacks/service/${feedback.service}`)
@@ -134,7 +132,7 @@ describe("## Feedback APIs", () => {
         .catch(done);
     });
   });
- describe("# GET /api/feedbacks/rating/:serviceId",()=>{
+  describe("# GET /api/feedbacks/rating/:serviceId", () => {
     it("should get average rating by service", (done) => {
       request(app)
         .get(`/api/feedbacks/rating/${feedback.service}`)
@@ -147,7 +145,7 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# GET /api/feedbacks/user/:userId",()=>{
+  describe("# GET /api/feedbacks/user/:userId", () => {
     it("should get all feedbacks by user", (done) => {
       request(app)
         .get(`/api/feedbacks/user/${feedback.ratingBy}`)
@@ -177,9 +175,10 @@ describe("## Feedback APIs", () => {
       request(app)
         .delete(`/api/feedbacks/${feedback._id}`)
         .expect(httpStatus.NO_CONTENT)
-        .then((res) => {done();})
+        .then((res) => {
+          done();
+        })
         .catch(done);
-
     });
   });
 });
