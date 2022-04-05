@@ -8,7 +8,7 @@ module.exports = {
       email: Joi.string().required(),
       cpf: Joi.string().required(),
       password: Joi.string().required(),
-    }
+    },
   },
 
   // UPDATE /api/users/:userId
@@ -19,7 +19,7 @@ module.exports = {
     },
     params: {
       // userId: Joi.string().hex().required()
-    }
+    },
   },
 
   // POST /api/auth/login
@@ -27,6 +27,26 @@ module.exports = {
     body: {
       // username: Joi.string().required(),
       // password: Joi.string().required()
-    }
+    },
+  },
+
+  // POST /api/feedbacks
+  createFeedback: {
+    body: {
+      comment: Joi.string(),
+      rating: Joi.number().min(1).max(5).required(),
+      service: Joi.string().required(),
+      ratingBy: Joi.string().required(),
+    },
+  },
+  // PATCH /api/feedbacks/:feedbackId
+  updateFeedback: {
+    body: {
+      comment: Joi.string(),
+      rating: Joi.number(),
+    },
+    params: {
+      feedbackId: Joi.string().hex().required(),
+    },
   },
 };
