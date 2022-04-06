@@ -13,20 +13,24 @@ module.exports = {
 
   // UPDATE /api/users/:userId
   updateUser: {
-    body: Joi.object({
-      // username: Joi.string().required(),
-      // mobileNumber: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
-    }).options({ abortEarly: false }),
+    body: Joi.object()
+      .keys({
+        updates: Joi.array().items({
+          chave: Joi.string().valid("name", "cpf", "email", "password"),
+          valor: Joi.any(),
+        }),
+      })
+      .options({ abortEarly: false }),
     params: Joi.object({
-      // userId: Joi.string().hex().required()
+      userId: Joi.string().hex().required(),
     }).options({ abortEarly: false }),
   },
 
   // POST /api/auth/login
   login: {
     body: Joi.object({
-      // username: Joi.string().required(),
-      // password: Joi.string().required()
+       email: Joi.string().required(),
+       password: Joi.string().required()
     }).options({ abortEarly: false }),
   },
 

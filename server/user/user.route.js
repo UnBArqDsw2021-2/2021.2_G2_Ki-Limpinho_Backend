@@ -18,7 +18,7 @@ router
   /** GET /api/users/:userId - Get user */
   .get(userCtrl.get)
 
-  /** PUT /api/users/:userId - Update user */
+  /** Patch /api/users/:userId - Update user */
   .patch(validate(paramValidation.updateUser), userCtrl.update)
 
   /** DELETE /api/users/:userId - Delete user */

@@ -26,20 +26,6 @@ Você trabalhou a semana toda e decide fazer aquela viagem no sábado que tanto 
 
 É por isso que a Ki-limpinho fornece uma aplicação web que ajuda ao cliente no monitoramento do veículo e ao gerente na organização do lava-jato e gerência das finanças. Com ela, o cliente consegue manter contato com o lava-jato e acompanhar o status do carro, já o gerente pode visualizar dashboards, planilhas, etc. que fornece a liquidez mensal e entre outros fatores importantes para a gestão do lava-jato.
 
-# Tecnologias [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/sindresorhus/awesome)
-
-[![Build Status](https://img.shields.io/travis/kunalkapadia/express-mongoose-es6-rest-api/master.svg?style=flat-square)](https://travis-ci.org/kunalkapadia/express-mongoose-es6-rest-api)
-[![Coverage Status](https://img.shields.io/coveralls/kunalkapadia/express-mongoose-es6-rest-api/master.svg?style=flat-square)](https://coveralls.io/github/kunalkapadia/express-mongoose-es6-rest-api?branch=master)
-[![Code Climate](https://img.shields.io/codeclimate/github/kunalkapadia/express-mongoose-es6-rest-api.svg?style=flat-square)](https://codeclimate.com/github/kunalkapadia/express-mongoose-es6-rest-api)
-[![bitHound Overall Score](https://www.bithound.io/github/kunalkapadia/express-es6-rest-api-starter/badges/score.svg)](https://www.bithound.io/github/kunalkapadia/express-es6-rest-api-starter)
-[![bitHound Dependencies](https://www.bithound.io/github/kunalkapadia/express-mongoose-es6-rest-api/badges/dependencies.svg)](https://www.bithound.io/github/kunalkapadia/express-mongoose-es6-rest-api/master/dependencies/npm)
-[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg?style=flat-square)](http://commitizen.github.io/cz-cli/)
-[![MIT License](https://img.shields.io/npm/l/stack-overflow-copy-paste.svg?style=flat-square)](http://opensource.org/licenses/MIT)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Support via Paypal](https://img.shields.io/badge/support-paypal-yellowgreen.svg?style=flat-square)](https://www.paypal.me/KunalKapadia)
-
-# [![Express ES6 REST API Starter](https://cloud.githubusercontent.com/assets/4172932/12660610/90f5b856-c63a-11e5-878e-c9f0bbf33090.jpg)](https://github.com/kunalkapadia/express-mongoose-es6-rest-api)
-
 
 ## Como rodar?
 
@@ -54,8 +40,14 @@ cd 2021.2_G2_Ki-Limpinho_Backend
 
 Subindo o container docker:
 ```sh
-docker-compose up
+docker-compose up  kilimpinho-backend
 ```
+
+Executando os testes:
+```sh
+docker-compose up --build kilimpinho-backend
+```
+
 
 Pronto, agora você já pode acessar a REST APT do projeto de Ki-limpinho, o acesso estará disponível pela porta 4040.
 

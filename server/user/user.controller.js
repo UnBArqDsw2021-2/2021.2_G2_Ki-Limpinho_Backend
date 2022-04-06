@@ -30,13 +30,19 @@ const apiUser = {
    * @property {string} req.body.mobileNumber - The mobileNumber of user.
    * @returns {User}
    */
-  async create(req, res, next) {
-    const user = new User(req.body);
+   async create(req, res, next) {
+    const { name, email, cpf, password } = req.body;
+    const user = new User({
+      name: name,
+      email: email,
+      cpf: cpf,
+      password: password,
+    });
     try {
       const result = await user.save();
       res.status(httpStatus.CREATED).json(result);
     } catch (error) {
-      next(new APIError(error.message, httpStatus.NOT_FOUND));
+      next(new APIError(error.message, httpStatus.BAD_REQUEST));
     }
   },
 

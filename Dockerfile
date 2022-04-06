@@ -1,4 +1,3 @@
-# Use latest node version 8.x
 FROM node:16.14.2
 
 # create app directory in container

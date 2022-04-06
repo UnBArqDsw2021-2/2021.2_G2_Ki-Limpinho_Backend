@@ -12,21 +12,29 @@ const apiAuth = {
    * @param next
    * @returns {*}
    */
-  async login(req, res, next) {
+   async login(req, res, next) {
     const userRequest = req.body;
     try {
-      const user = await User.find({ email: userRequest.email });
+      let savedUser = await User.find({ email: userRequest.email });
+      savedUser = savedUser.shift();
 
-      if (userRequest.senha === user.senha) {
+      if (userRequest.password === savedUser.password) {
         const token = jwt.sign(
           {
-            email: user.email,
+            email: savedUser.email,
           },
           config.jwtSecret
         );
         return res.json({
           token,
-          user: user[0],
+          user: {
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            cpf: savedUser.cpf,
+            createdAt: savedUser.createdAt,
+            isAdmin: savedUser.email === config.email,
+          },
         });
       }
       const err = new APIError(
@@ -38,7 +46,7 @@ const apiAuth = {
     } catch (error) {
       const err = new APIError(
         "Email não encontrado.",
-        httpStatus.NOT_FOUND,
+        httpStatus.BAD_REQUEST,
         true
       );
       return next(err);

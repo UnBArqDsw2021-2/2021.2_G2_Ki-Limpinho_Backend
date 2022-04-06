@@ -2,5 +2,6 @@
 
 # --build: Build images before starting containers.
 # --abort-on-container-exit: Stops all containers if any container is stopped
-docker-compose -f 'docker-compose.test.yml' -p ci up --build --abort-on-container-exit
-exit $(docker wait ci_kilimpinho-backend_1)
+
+docker-compose up --build  --abort-on-container-exit kilimpinho-backend-test  
+exit $(docker wait  kilimpinho-backend-test)
