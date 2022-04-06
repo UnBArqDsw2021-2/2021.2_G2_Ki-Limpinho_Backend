@@ -2559,7 +2559,7 @@
     "mongodb-core" "2.1.2"
     "readable-stream" "2.1.5"
 
-"mongoose@4.7.4":
+"mongoose@^4.7.4":
   "integrity" "sha1-6S4W7HWtYvO1b3IJYS1l3SWz8L0="
   "resolved" "https://registry.npmjs.org/mongoose/-/mongoose-4.7.4.tgz"
   "version" "4.7.4"
