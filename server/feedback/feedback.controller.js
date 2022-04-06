@@ -6,7 +6,6 @@ const config = require("../../config/config");
 
 const ObjectId = mongoose.Types.ObjectId;
 const apiFeedback = {
-
   /**
    * Get feedback
    * @returns {Feedback}
@@ -14,17 +13,16 @@ const apiFeedback = {
   async get(req, res, next) {
     const _idFeedback = req.params.feedbackId;
 
-    try{
+    try {
       const result = await Feedback.get(_idFeedback);
-      if(!result){
+      if (!result) {
         throw new APIError("No feedback found", httpStatus.NOT_FOUND);
       }
       res.status(httpStatus.OK).json(result);
-    }catch(err){
+    } catch (err) {
       next(new APIError(err.message, httpStatus.NOT_FOUND));
     }
   },
-  
 
   /**
    * Create new feedback
@@ -38,7 +36,7 @@ const apiFeedback = {
     const { comment, rating, service, ratingBy } = req.body;
     const feedback = new Feedback({
       comment: comment,
-      rating:rating,
+      rating: rating,
       ratingBy: ObjectId(ratingBy),
       service: ObjectId(service),
     });
@@ -115,7 +113,7 @@ const apiFeedback = {
       result = await Feedback.getRatingByService(_idService);
       res.status(httpStatus.OK).json(result[0]);
     } catch (error) {
-      next(new APIError(error.message));
+      next(new APIError(error));
     }
   },
   /**
@@ -150,22 +148,23 @@ const apiFeedback = {
    * @returns {Feedback}
    */
   async remove(req, res, next) {
-    const _idFeedback =  req.params.feedbackId;
-    try{
+    const _idFeedback = req.params.feedbackId;
+    try {
       const feedback = await Feedback.get(_idFeedback);
-      if(!feedback){
+      if (!feedback) {
         throw new APIError("No feedback found", httpStatus.NOT_FOUND);
       }
       feedback
-      .remove()
-      .then((deletedFeedback) => res.status(httpStatus.OK).json(deletedFeedback))
-      .catch(err=>next(new APIError(err.message, httpStatus.expectationFailed)));
-
-    }
-    catch(err){
+        .remove()
+        .then((deletedFeedback) =>
+          res.status(httpStatus.OK).json(deletedFeedback)
+        )
+        .catch((err) =>
+          next(new APIError(err.message, httpStatus.expectationFailed))
+        );
+    } catch (err) {
       next(new APIError(err.message, httpStatus.NO_CONTENT));
     }
-
   },
 };
 

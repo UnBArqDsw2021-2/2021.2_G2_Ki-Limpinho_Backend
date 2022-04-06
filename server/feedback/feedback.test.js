@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const request = require("supertest-as-promised");
+const request = require("supertest");
 const httpStatus = require("http-status");
-const chai = require("chai"); // eslint-disable-line import/newline-after-import
+const chai = require("chai");
 const expect = chai.expect;
 const app = require("../../index");
 
@@ -25,10 +25,10 @@ describe("## Feedback APIs", () => {
     ratingBy: "5c9b8b8f9c9d8b3f8c8b4b9f",
   };
 
-  describe("# POST /api/feedbacks", () => {
-    it("should create a new feedback",  (done) => {
+  describe("# POST /api/feedback", () => {
+    it("should create a new feedback", (done) => {
       request(app)
-        .post("/api/feedbacks")
+        .post("/api/feedback")
         .send(feedback)
         .expect(httpStatus.CREATED)
         .then((res) => {
@@ -43,10 +43,10 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# GET /api/feedbacks/:feedbackId", () => {
+  describe("# GET /api/feedback/:feedbackId", () => {
     it("should get feedback details", (done) => {
       request(app)
-        .get(`/api/feedbacks/${feedback._id}`)
+        .get(`/api/feedback/${feedback._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.comment).to.equal(feedback.comment);
@@ -60,7 +60,7 @@ describe("## Feedback APIs", () => {
 
     it("should report error with message - Not found, when feedback does not exists", (done) => {
       request(app)
-        .get("/api/feedbacks/56c787ccc67fc16ccc1a5e92")
+        .get("/api/feedback/56c787ccc67fc16ccc1a5e92")
         .expect(httpStatus.NOT_FOUND)
         .then((res) => {
           expect(res.body.message).to.equal("Not Found");
@@ -70,19 +70,18 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# Patch /api/feedbacks/:feedbackId", () => {
-  
+  describe("# Patch /api/feedback/:feedbackId", () => {
     it("should update feedback details", (done) => {
-      let update =  { 
-        "updates": [
-           {
-          "chave": "comment",
-          "valor": "Odiei a lavagem americana"
-          }
-        ]
-      }
+      let update = {
+        updates: [
+          {
+            chave: "comment",
+            valor: "Odiei a lavagem americana",
+          },
+        ],
+      };
       request(app)
-        .patch(`/api/feedbacks/${feedback._id}`)
+        .patch(`/api/feedback/${feedback._id}`)
         .send(update)
         .expect(httpStatus.OK)
         .then((res) => {
@@ -96,10 +95,10 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# GET /api/feedbacks/", () => {
+  describe("# GET /api/feedback/", () => {
     it("should get all feedbacks", (done) => {
       request(app)
-        .get("/api/feedbacks")
+        .get("/api/feedback")
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.an("array");
@@ -110,7 +109,7 @@ describe("## Feedback APIs", () => {
 
     it("should get all feedbacks (with limit and skip)", (done) => {
       request(app)
-        .get("/api/feedbacks")
+        .get("/api/feedback")
         .query({ limit: 10, skip: 1 })
         .expect(httpStatus.OK)
         .then((res) => {
@@ -121,11 +120,10 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  
-  describe("# GET /api/feedbacks/service/:serviceId",()=>{
+  describe("# GET /api/feedback/service/:serviceId", () => {
     it("should get all feedbacks by service", (done) => {
       request(app)
-        .get(`/api/feedbacks/service/${feedback.service}`)
+        .get(`/api/feedback/service/${feedback.service}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.an("array");
@@ -134,10 +132,10 @@ describe("## Feedback APIs", () => {
         .catch(done);
     });
   });
- describe("# GET /api/feedbacks/rating/:serviceId",()=>{
+  describe("# GET /api/feedback/rating/:serviceId", () => {
     it("should get average rating by service", (done) => {
       request(app)
-        .get(`/api/feedbacks/rating/${feedback.service}`)
+        .get(`/api/feedback/rating/${feedback.service}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.media).to.equal(5);
@@ -147,10 +145,10 @@ describe("## Feedback APIs", () => {
     });
   });
 
-  describe("# GET /api/feedbacks/user/:userId",()=>{
+  describe("# GET /api/feedback/user/:userId", () => {
     it("should get all feedbacks by user", (done) => {
       request(app)
-        .get(`/api/feedbacks/user/${feedback.ratingBy}`)
+        .get(`/api/feedback/user/${feedback.ratingBy}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.an("array");
@@ -159,10 +157,10 @@ describe("## Feedback APIs", () => {
         .catch(done);
     });
   });
-  describe("# DELETE /api/feedbacks/", () => {
+  describe("# DELETE /api/feedback/", () => {
     it("should delete feedback", (done) => {
       request(app)
-        .delete(`/api/feedbacks/${feedback._id}`)
+        .delete(`/api/feedback/${feedback._id}`)
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body.comment).to.equal("Odiei a lavagem americana");
@@ -175,11 +173,12 @@ describe("## Feedback APIs", () => {
     });
     it("should get no content because the feedback already is deleted", (done) => {
       request(app)
-        .delete(`/api/feedbacks/${feedback._id}`)
+        .delete(`/api/feedback/${feedback._id}`)
         .expect(httpStatus.NO_CONTENT)
-        .then((res) => {done();})
+        .then((res) => {
+          done();
+        })
         .catch(done);
-
     });
   });
 });

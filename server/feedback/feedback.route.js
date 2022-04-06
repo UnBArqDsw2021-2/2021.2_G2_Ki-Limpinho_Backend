@@ -1,5 +1,5 @@
 const express = require("express");
-const validate = require("express-validation");
+const { validate } = require("express-validation");
 const paramValidation = require("../../config/param-validation");
 const feedbackCtrl = require("./feedback.controller");
 const router = express.Router(); // eslint-disable-line new-cap
@@ -37,6 +37,5 @@ router
   .route("/user/:userId")
   /** GET /api/feedbacks/user/:userId - Get feedback by user */
   .get(feedbackCtrl.getByUser);
-
 
 module.exports = router;

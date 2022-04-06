@@ -12,7 +12,7 @@ const apiAuth = {
    * @param next
    * @returns {*}
    */
-  async login(req, res, next) {
+   async login(req, res, next) {
     const userRequest = req.body;
     try {
       let savedUser = await User.find({ email: userRequest.email });
