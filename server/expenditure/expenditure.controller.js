@@ -25,7 +25,43 @@ const apiExpenditure = {
     } catch (err) {
       return next(new APIError(err.message, httpStatus.BAD_REQUEST));
     }
-  }
+  },
+
+  async listExpenditures(req, res, next) {
+    let filtros = {};
+    let result = {};
+    let campos = [];
+    const pagina = parseInt(req.query.pagina || 0, 10);
+    const tamanhoPagina = Math.min(
+      parseInt(req.query.tamanhoPagina || 20, 10),
+      100
+    );
+    if (req.query.filtros) {
+      try {
+        filtros = JSON.parse(req.query.filtros);
+      } catch (error) {
+        next(
+          new APIError(
+            'Filtro mal formatado, esperado um json',
+            httpStatus.BAD_REQUEST,
+            true
+          )
+        );
+      }
+    }
+    if (req.query.campos) {
+      campos = req.query.campos.split(',');
+    }
+    try {
+      result = await Expenditure.list({ pagina, tamanhoPagina, filtros, campos });
+    } catch (error) {
+      next(error);
+    }
+
+    res.setHeader('X-Total-Count', result.count);
+    res.status(httpStatus.OK).json(result.expenditures);
+  },
 };
 
 module.exports = apiExpenditure;
+

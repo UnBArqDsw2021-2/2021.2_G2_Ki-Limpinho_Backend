@@ -55,9 +55,18 @@ app.use("/api", routes);
 app.use((err, req, res, next) => {
   if (err instanceof ValidationError) {
     // validation error contains errors which is an array of error each containing message[]
-    const unifiedErrorMessage = err.details.body.reduce((acc, { message }) => {
-      return acc + `\n ${message}`;
-    }, "");
+    let unifiedErrorMessage ="";
+    if( err.details.body){
+      unifiedErrorMessage += err.details.body.reduce((acc, { message }) => {
+        return acc + `\n ${message}`;
+      }, "");
+    }
+    if( err.details.query){
+      unifiedErrorMessage += err.details.query.reduce((acc, { message }) => {
+        return acc + `\n ${message}`;
+      }, "");
+    }
+
 
     const error = new APIError(unifiedErrorMessage, err.statusCode, true);
     return next(error);

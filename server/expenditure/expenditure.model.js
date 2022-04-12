@@ -19,7 +19,9 @@ const ObjectId = mongoose.Types.ObjectId;
 const ExpenditureSchema = new mongoose.Schema({
   amount: {
     type: Number,
-    required: true
+    required: true,
+    get: v => Math.round(v * 100) / 100,
+    set: v => Math.round(v * 100) / 100
   },
   date: {
     type: Date,
@@ -46,6 +48,9 @@ const ExpenditureSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+},    
+{ 
+  toJSON: { getters: true } 
 });
 
 /**
@@ -75,35 +80,80 @@ ExpenditureSchema.pre("findOneAndUpdate", function (next) {
  * Methods
  */
 
-ExpenditureSchema.path("amount").get(function (v) {
-  return Math.round(v * 100) / 100;
-});
-
-ExpenditureSchema.path("amount").set(function (v) {
-  return Math.round(v * 100) / 100;
-});
 
 /**
  * Statics
  */
-
+// Eu, como gerente do sistema desejo listar despesas fixas e variáveis(mês), para ter controle sobre lucro líquido e o fluxo de caixa.
 ExpenditureSchema.statics = {
+  
   /**
-   *  
-   * @param {ObjectId} id - The objectId of expenditure.
-   * @returns {Promise<Expenditure, APIError>}
-   *  
-   * @memberof Expenditure
-   *  
-   * @example
-   * Expenditure.get(id)
-   *  
-  */
+   * List expenditures
+   * @param {number} pagina - Number of expenditures to be skipped.
+   * @param {number} tamanhoPagina - Limit number of expenditures to be returned.
+   * @param {*} [filtros] - Filter to be applied.
+   * @param {Array} campos - Fields to be returned.
+   * @returns {Promise<Expenditure[]>}
+   */
+   
+
+  async list({
+    pagina = 0,
+    tamanhoPagina = 20,
+    filtros = {},
+    campos = []
+  } = {}) {
+    const mongoQuery = {};
+    let mongoProjection = {};
+
+    if (filtros !== {} && typeof filtros === 'object') {
+      Object.keys(filtros).forEach((keyFiltro) => {
+        mongoQuery[keyFiltro] = filtros[keyFiltro];
+      });
+    }
+    if(filtros.date){
+      date = new Date(filtros.date);
+      const month = date.getMonth();
+      const year = date.getFullYear();
+      const start = new Date(year, month, 1);
+      const end = new Date(year, month + 1, 0);
+      mongoQuery.date = {};
+      mongoQuery.date.$gte = start;
+      mongoQuery.date.$lte = end;
+    }
+
+
+    if (Array.isArray(campos) && campos.length > 0) {
+      mongoProjection = {};
+      campos.forEach((field) => {
+        mongoProjection[field] = 1;
+      });
+    }
+
+    try {
+      const count = await this.find(mongoQuery).count().exec();
+      let limit = count;
+      if (!limit) {
+        limit = 1;
+      }
+ 
+      const expenditures = await this
+        .find(mongoQuery, mongoProjection)
+        .sort({ date: -1 })
+        .skip(pagina * tamanhoPagina)
+        .limit(+tamanhoPagina ? +tamanhoPagina : limit)
+        .exec();
+      return { expenditures, count };
+    } catch (error) {
+      throw error;
+    }
+  },
+
 
 
 
 }
-
+ 
 /**
  * @typedef Feedback
  */

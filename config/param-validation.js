@@ -68,5 +68,14 @@ module.exports = {
       isFixed: Joi.boolean().required(),
     }).options({ abortEarly: false }),
   },
-  
+
+  // GET /api/expenditures
+  listExpenditures: {
+    query: Joi.object({
+      pagina: Joi.number().min(1),
+      tamanhoPagina: Joi.number().min(1).max(100),
+      campos: Joi.string().valid("amount", "date", "description", "title", "isFixed"),
+      filtros: Joi.string(),
+    }).options({ abortEarly: false }),
+  }
 };

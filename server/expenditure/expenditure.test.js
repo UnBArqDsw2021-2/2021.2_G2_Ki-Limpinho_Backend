@@ -3,43 +3,70 @@ const httpStatus = require('http-status');
 const request = require('supertest');
 const app = require('../../index');
 const chai = require('chai');
-
+const dummy = require('mongoose-dummy');
+const Expenditure = require("./expenditure.model");
+const { beforeEach } = require('mocha');
 
 const expect = chai.expect;
 
 chai.config.includeStack = true;
 
+const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
 /**
  * root level hooks
  */
+let expenditures=[];
+ for (var i=0; i<30; i++) {
+  expenditures.push(dummy(Expenditure,{
+    returnDate: true,
+    autoDetect: true,
+    ignore: ignoredFields,
+    
+  }));
+}
+for (var i=0; i<20; i++) {
+  expenditures.push(dummy(Expenditure,{
+    returnDate: true,
+    autoDetect: true,
+    ignore: ignoredFields,
+    force:{
+      date: new Date("2020-05-1"),
+      isFixed: true,
+    }
+  }));
+}
+/** clear database and populate the database before all tests */
+beforeEach(async () => {
+  await Expenditure.deleteMany({});
+  await Expenditure.insertMany(expenditures);
+});
+
 
 after((done) => {
   mongoose.models = {};
   mongoose.modelSchemas = {};
+  mongoose.connection.dropDatabase();
   mongoose.connection.close();
   done();
 });
 
 describe('## Expenditure APIs', () => {
-    let Expenditure={
-        amount:10321312.12,
-        date:new Date('2022-05-21T00:00:00.000Z'),
-        description:'test',
-        title:'test',
-        isFixed:false,
-    }
+    let expenditure = dummy(Expenditure, {
+      ignore: ignoredFields.concat(['createdAt', 'updatedAt']),
+      returnDate: true
+  })
 
     describe('# POST /api/expenditure', () => {
         it("should create a new expenditure", (done) => {
           request(app)
             .post('/api/expenditure')
-            .send(Expenditure)
+            .send(expenditure)
             .expect(httpStatus.CREATED)
             .then((res) => {
-              expect(Date(res.body.date)).to.equal(Date(Expenditure.date));
-              expect(res.body.description).to.equal(Expenditure.description);
-              expect(res.body.title).to.equal(Expenditure.title);
-              expect(res.body.isFixed).to.equal(Expenditure.isFixed);
+              expect(Date(res.body.date)).to.equal(Date(expenditure.date));
+              expect(res.body.description).to.equal(expenditure.description);
+              expect(res.body.title).to.equal(expenditure.title);
+              expect(res.body.isFixed).to.equal(expenditure.isFixed);
               done();
             }
           )
@@ -57,5 +84,60 @@ describe('## Expenditure APIs', () => {
         ).catch(done);
   });
 });
+
+    describe('# GET /api/expenditure/', () => {
+      it("should get from first page", (done) => {
+        request(app)
+          .get('/api/expenditure')
+          .expect(httpStatus.OK)
+          .then((res) => {
+            expect(res.body.length).to.equal(20);                    
+            expect(res.headers.hasOwnProperty('x-total-count')).to.equal(true);
+            expect(res.headers['x-total-count']).to.equal('50');
+            done();
+
+          }
+        ).catch(done);
+      });
+      it("should get from second page", (done) => {
+        request(app)
+          .get('/api/expenditure/?pagina=2&tamanhoPagina=20')
+          .expect(httpStatus.OK)
+          .then((res) => {
+            expect(res.headers.hasOwnProperty('x-total-count')).to.equal(true);
+            expect(res.headers['x-total-count']).to.equal('50');
+            expect(res.body.length).to.equal(10);
+            done();
+
+          }
+        ).catch(done);
+        });
+        it("should get all expenditure from month 05 of 2020", (done) => {
+          request(app)
+            .get('/api/expenditure/?tamanhoPagina=20&filtros={"date": "2020-05-11T21:35:59.187Z"}')
+            .expect(httpStatus.OK)
+            .then((res) => {
+              expect(res.headers.hasOwnProperty('x-total-count')).to.equal(true);
+              expect(res.headers['x-total-count']).to.equal('20');
+              expect(res.body.length).to.equal(20);
+              done();
+  
+            }
+          ).catch(done);
+          });
+          it("should get all expenditure from month 05 of 2020", (done) => {
+            request(app)
+              .get('/api/expenditure/?filtros={"isFixed":true}')
+              .expect(httpStatus.OK)
+              .then((res) => {
+                expect(res.headers.hasOwnProperty('x-total-count')).to.equal(true);
+                expect(Number(res.headers['x-total-count'])).greaterThanOrEqual(20);
+                expect(res.body.length).greaterThanOrEqual(20);
+                done();
+    
+              }
+            ).catch(done);
+            });
+  });
 
 });
