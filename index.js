@@ -12,10 +12,9 @@ Promise = require("bluebird"); // eslint-disable-line no-global-assign
 
 // plugin bluebird promise in mongoose
 mongoose.Promise = Promise;
-
+let mongoUri = config.mongo.host;
 // connect to mongo db
 (async () => {
-  let mongoUri = config.mongo.host;
   if (config.env == "test") {
     const mongod = new MongoMemoryServer();
     await mongod.start();
