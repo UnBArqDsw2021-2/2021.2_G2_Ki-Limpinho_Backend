@@ -2,6 +2,7 @@ const Promise = require('bluebird');
 const mongoose = require('mongoose');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
+const bcrypt = require("bcrypt"); 
 
 const ObjectId = mongoose.Types.ObjectId;
 /**
@@ -10,21 +11,27 @@ const ObjectId = mongoose.Types.ObjectId;
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    trim: true,
+    
   },
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
   password: {
     type: String,
     required: true,
+    trim: true,
+    select: false,
   },
   cpf: {
     type: String,
     required: false,
-    default: null
+    default: null,
+    trim: true
   },
   createdAt: {
     type: Date,
@@ -38,6 +45,19 @@ const UserSchema = new mongoose.Schema({
  * - validations
  * - virtuals
  */
+ UserSchema.pre("save", function (next) {
+  const user = this;
+  if (!user.isModified("password")) {
+    return next();
+  }
+  bcrypt.hash(user.password, 10, (err, hash) => {
+    if (err) {
+      return next(err);
+    }
+    user.password = hash;
+    next();
+  });
+});
 
 /**
  * Methods

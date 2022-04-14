@@ -3,6 +3,8 @@ const httpStatus = require("http-status");
 const APIError = require("../helpers/APIError");
 const config = require("../../config/config");
 const User = require("../user/user.model");
+const bcrypt = require("bcrypt");
+
 
 const apiAuth = {
   /**
@@ -15,10 +17,18 @@ const apiAuth = {
    async login(req, res, next) {
     const userRequest = req.body;
     try {
-      let savedUser = await User.find({ email: userRequest.email });
-      savedUser = savedUser.shift();
+      
+      const user = await User.find({ email: userRequest.email }).select("+password");
+      savedUser = user.shift();
+      if (!savedUser) {
+        throw new APIError("Email não encontrado", httpStatus.NOT_FOUND);
+      }
+      const isPasswordValid = await bcrypt.compare(userRequest.password, savedUser.password);
+      if (!isPasswordValid) {
+        throw new APIError("Senha incorreta.", httpStatus.UNAUTHORIZED);
+      }
 
-      if (userRequest.password === savedUser.password) {
+      if (isPasswordValid) {
         const token = jwt.sign(
           {
             email: savedUser.email,
@@ -37,21 +47,16 @@ const apiAuth = {
           },
         });
       }
-      const err = new APIError(
-        "Senha incorreta.",
-        httpStatus.UNAUTHORIZED,
-        true
-      );
-      return next(err);
+
     } catch (error) {
       const err = new APIError(
-        "Email não encontrado.",
-        httpStatus.BAD_REQUEST,
+        error.message,
+        error.status,
         true
       );
       return next(err);
     }
-  },
+  }
 };
 
 module.exports = apiAuth;
