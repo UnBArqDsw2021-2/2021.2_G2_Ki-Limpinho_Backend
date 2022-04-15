@@ -86,8 +86,6 @@ FeedbackSchema.statics = {
       });
   },
 
-
-
   /**
    * Get all feedbacks by service
    * @param {ObjectId} idService - The objectId of service.
@@ -113,20 +111,17 @@ FeedbackSchema.statics = {
    * @returns {Promise<Feedback, APIError>}
    */
   getRatingByService(idService) {
-    return this.aggregate([
-      {
-        '$match': {
-          'service': ObjectId(idService)
-        }
-      }, {
-        '$group': {
-          '_id': '$service', 
-          'media': {
-            '$avg': '$rating'
-          }
-        }
-      }
-    ]).allowDiskUse(true)
+    return this.aggregate()
+      .match({
+        service: ObjectId(idService),
+      })
+      .group({
+        _id: "$service",
+        media: {
+          $avg: "$rating",
+        },
+      })
+      .allowDiskUse(true)
       .exec()
       .then((rating) => {
         if (rating) {
@@ -137,12 +132,11 @@ FeedbackSchema.statics = {
           httpStatus.NOT_FOUND
         );
         return Promise.reject(err);
-      }
-    );
+      });
   },
 
   /**
-   * Get feeack by user
+   * Get feedback by user
    * @param {ObjectId} idUser - The objectId of user.
    * @returns {Promise<Feedback, APIError>}
    */
@@ -171,7 +165,7 @@ FeedbackSchema.statics = {
    * Lista feedbacks
    * @param {number} pagina - Numero da pagina atual.
    * @param {number} tamanhoPagina - Numero de patentes por pagina.
-   * @param {*} filtros - JSON no formato de um filtro de projecao.
+   * @param {*} filtros - JSON no formato de um filtro de projeção.
    * @param {Array} campos - Campos que devem ser projetados.
    * @returns {Promise<feedbacks[]>}
    */

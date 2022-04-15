@@ -1,52 +1,60 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 module.exports = {
   // POST /api/users
   createUser: {
-    body: {
+    body: Joi.object({
       name: Joi.string().required(),
       email: Joi.string().required(),
       cpf: Joi.string().required(),
       password: Joi.string().required(),
-    },
+    }).options({ abortEarly: false }),
   },
 
   // UPDATE /api/users/:userId
   updateUser: {
-    body: {
-      // username: Joi.string().required(),
-      // mobileNumber: Joi.string().regex(/^[1-9][0-9]{9}$/).required()
-    },
-    params: {
-      // userId: Joi.string().hex().required()
-    },
+    body: Joi.object()
+      .keys({
+        updates: Joi.array().items({
+          chave: Joi.string().valid("name", "cpf", "email", "password"),
+          valor: Joi.any(),
+        }),
+      })
+      .options({ abortEarly: false }),
+    params: Joi.object({
+      userId: Joi.string().hex().required(),
+    }).options({ abortEarly: false }),
   },
 
   // POST /api/auth/login
   login: {
-    body: {
-      // username: Joi.string().required(),
-      // password: Joi.string().required()
-    },
+    body: Joi.object({
+       email: Joi.string().required(),
+       password: Joi.string().required()
+    }).options({ abortEarly: false }),
   },
 
   // POST /api/feedbacks
   createFeedback: {
-    body: {
+    body: Joi.object({
       comment: Joi.string(),
       rating: Joi.number().min(1).max(5).required(),
       service: Joi.string().required(),
       ratingBy: Joi.string().required(),
-    },
+    }).options({ abortEarly: false }),
   },
   // PATCH /api/feedbacks/:feedbackId
   updateFeedback: {
-    body: {
-      comment: Joi.string(),
-      rating: Joi.number(),
-    },
-    params: {
+    body: Joi.object()
+      .keys({
+        updates: Joi.array().items({
+          chave: Joi.string().valid("comment", "rating"),
+          valor: Joi.any(),
+        }),
+      })
+      .options({ abortEarly: false }),
+    params: Joi.object({
       feedbackId: Joi.string().hex().required(),
-    },
+    }).options({ abortEarly: false }),
   },
 };

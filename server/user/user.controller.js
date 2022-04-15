@@ -30,7 +30,7 @@ const apiUser = {
    * @property {string} req.body.mobileNumber - The mobileNumber of user.
    * @returns {User}
    */
-  async create(req, res, next) {
+   async create(req, res, next) {
     const { name, email, cpf, password } = req.body;
     const user = new User({
       name: name,
