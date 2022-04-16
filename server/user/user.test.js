@@ -34,7 +34,6 @@ describe("## User APIs", () => {
           expect(res.body.name).to.equal(user.name);
           expect(res.body.email).to.equal(user.email);
           expect(res.body.cpf).to.equal(user.cpf);
-          expect(res.body.password).to.equal(user.password);
           user = res.body;
           done();
         })
@@ -42,7 +41,7 @@ describe("## User APIs", () => {
     });
   });
 
-  describe("# GET /api/users/:userId", () => {
+  describe("# GET /api/user/:userId", () => {
     it("should get user details", (done) => {
       request(app)
         .get(`/api/user/${user._id}`)
