@@ -44,13 +44,13 @@ const ExpenditureSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now,
-  },
-},    
-{ 
-  toJSON: { getters: true } 
+  // updatedAt: {
+  //   type: Date,
+  //   default: Date.now,
+  // },
+},
+{
+  toJSON: { getters: true }
 });
 
 /**
@@ -62,7 +62,7 @@ const ExpenditureSchema = new mongoose.Schema({
 
 ExpenditureSchema.pre("save", function (next) {
   now = new Date();
-  this.updatedAt = now;
+  // this.updatedAt = now;
   if (!this.createdAt) {
     this.createdAt = now;
   }
@@ -70,12 +70,12 @@ ExpenditureSchema.pre("save", function (next) {
 }
 );
 
-ExpenditureSchema.pre("findOneAndUpdate", function (next) {
-  now = new Date();
-  this.updatedAt = now;
-  next();
-}
-);
+// ExpenditureSchema.pre("findOneAndUpdate", function (next) {
+//   now = new Date();
+//   this.updatedAt = now;
+//   next();
+// }
+// );
 /**
  * Methods
  */
@@ -86,7 +86,7 @@ ExpenditureSchema.pre("findOneAndUpdate", function (next) {
  */
 // Eu, como gerente do sistema desejo listar despesas fixas e variáveis(mês), para ter controle sobre lucro líquido e o fluxo de caixa.
 ExpenditureSchema.statics = {
-  
+
   /**
    * List expenditures
    * @param {number} pagina - Number of expenditures to be skipped.
@@ -95,7 +95,7 @@ ExpenditureSchema.statics = {
    * @param {Array} campos - Fields to be returned.
    * @returns {Promise<Expenditure[]>}
    */
-   
+
 
   async list({
     pagina = 0,
@@ -112,7 +112,10 @@ ExpenditureSchema.statics = {
       });
     }
     if(filtros.date){
-      date = new Date(filtros.date);
+      const date = new Date(filtros.date);
+      if(isNaN(date)){
+        throw new APIError("Formato de data inválido");
+      }
       const month = date.getMonth();
       const year = date.getFullYear();
       const start = new Date(year, month, 1);
@@ -136,7 +139,7 @@ ExpenditureSchema.statics = {
       if (!limit) {
         limit = 1;
       }
- 
+
       const expenditures = await this
         .find(mongoQuery, mongoProjection)
         .sort({ date: -1 })
@@ -148,12 +151,8 @@ ExpenditureSchema.statics = {
       throw error;
     }
   },
-
-
-
-
 }
- 
+
 /**
  * @typedef Feedback
  */

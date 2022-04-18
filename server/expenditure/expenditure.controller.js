@@ -15,7 +15,7 @@ const apiExpenditure = {
    * @property {string} req.body.isFixed - Whether the expenditure is fixed or not.
    * @property {string} req.body.title - The title of the expenditure.
    * @returns {Expenditure}
-   * 
+   *
    */
   async create(req, res, next)  {
     try {
@@ -31,6 +31,7 @@ const apiExpenditure = {
     let filtros = {};
     let result = {};
     let campos = [];
+
     const pagina = parseInt(req.query.pagina || 0, 10);
     const tamanhoPagina = Math.min(
       parseInt(req.query.tamanhoPagina || 20, 10),
@@ -40,7 +41,7 @@ const apiExpenditure = {
       try {
         filtros = JSON.parse(req.query.filtros);
       } catch (error) {
-        next(
+        return next(
           new APIError(
             'Filtro mal formatado, esperado um json',
             httpStatus.BAD_REQUEST,
@@ -49,13 +50,14 @@ const apiExpenditure = {
         );
       }
     }
-    if (req.query.campos) {
-      campos = req.query.campos.split(',');
-    }
+
+    if(req.query.campos && typeof(req.query.campos) === 'string') campos.push(req.query.campos)
+    else if(req.query.campos) campos = req.query.campos;
+
     try {
       result = await Expenditure.list({ pagina, tamanhoPagina, filtros, campos });
     } catch (error) {
-      next(error);
+      return next(error);
     }
 
     res.setHeader('X-Total-Count', result.count);
