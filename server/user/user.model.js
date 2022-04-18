@@ -138,39 +138,35 @@ UserSchema.statics = {
     }
   },
 
+  // updates: [
+  //   {
+  //     chave: "nome",
+  //     valor: "Henrique",
+  //   },
+  //   {
+  //     chave: "email",
+  //     valor: "a@a.com",
+  //   },
+  //   {
+  //     chave: "cpf",
+  //     valor: "123345",
+  //   },
+  // ]
   async updateUser({
     idUser,
     updates
   } = {}) {
     const _idUser = new ObjectId(idUser);
-    
-    // codificar senha
-    if (updates.updates[0].chave === 'password') {
-      const salt = await bcrypt.genSalt(10);
-      const hashPassword = await bcrypt.hash(updates.updates[0].valor, salt);
-      updates.updates[0].valor = hashPassword;
-    }
     const updateQuery = {};
 
-    updateQuery[updates.chave] = updates.valor;
-    // updates: [
-    //   {
-    //     chave: "nome",
-    //     valor: "Henrique",
-    //   },
-    //   {
-    //     chave: "email",
-    //     valor: "a@a.com",
-    //   },
-    //   {
-    //     chave: "cpf",
-    //     valor: "123345",
-    //   },
-    // ]
-
-    updates.updates.forEach((update) => {
+    updates.updates.forEach(update => {
       updateQuery[update.chave] = update.valor;
     });
+
+    if(updateQuery.password) {
+      const salt = await bcrypt.genSalt(10);
+      updateQuery.password = await bcrypt.hash(updateQuery.password, salt);
+    }
 
     try {
       const result = await this.findOneAndUpdate(

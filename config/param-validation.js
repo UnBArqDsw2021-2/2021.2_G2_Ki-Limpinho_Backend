@@ -21,9 +21,6 @@ module.exports = {
         }),
       })
       .options({ abortEarly: false }),
-    params: Joi.object({
-      userId: Joi.string().hex().required(),
-    }).options({ abortEarly: false }),
   },
 
   // POST /api/auth/login
