@@ -48,9 +48,6 @@ const ExpenditureSchema = new mongoose.Schema({
   //   type: Date,
   //   default: Date.now,
   // },
-},
-{
-  toJSON: { getters: true }
 });
 
 /**
@@ -59,6 +56,8 @@ const ExpenditureSchema = new mongoose.Schema({
  * - validations
  * - virtuals
  */
+ExpenditureSchema.set("toJSON", { getters: true , versionKey:false, transform: function (doc, ret) {   delete ret.id  }});
+
 
 ExpenditureSchema.pre("save", function (next) {
   now = new Date();
