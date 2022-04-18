@@ -4,6 +4,9 @@ const httpStatus = require("http-status");
 const chai = require("chai"); 
 const expect = chai.expect;
 const app = require("../../index");
+const jwt = require("jsonwebtoken");
+const config = require("../../config/config");
+
 
 chai.config.includeStack = true;
 
@@ -79,8 +82,15 @@ describe("## User APIs", () => {
           },
         ],
       };
+      const token = jwt.sign(
+        {
+          idUser: user._id,
+        },
+        config.jwtSecret
+      );
       request(app)
-        .patch(`/api/user/${user._id}`)
+        .patch(`/api/user`)
+        .set('Authorization', 'Bearer ' + token)
         .send(update)
         .expect(httpStatus.OK)
         .then((res) => {
