@@ -24,7 +24,6 @@ services:
 
     # Overwrite any env var defined in .env file (if required)
     environment:
-      - MONGO_HOST=mongodb://mongo/kilimpinho-backend
       - DEBUG=kilimpinho-backend:*
 
     # Link to containers in another service.
