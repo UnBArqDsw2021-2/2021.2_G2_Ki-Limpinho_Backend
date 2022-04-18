@@ -68,8 +68,8 @@ services:
       - /bin/bash
       - -c
       - yarn --pure-lockfile && yarn test
-    
+
   mongo:
     image: "mongo:5.0.6"
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT}:27017"
