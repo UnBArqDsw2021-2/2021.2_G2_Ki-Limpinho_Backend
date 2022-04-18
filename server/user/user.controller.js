@@ -48,7 +48,7 @@ const apiUser = {
   },
 
   async update(req, res, next) {
-    const _idUser = req.params.userId;
+    const _idUser = req.user.idUser;
     const updateFields = req.body;
 
       try {

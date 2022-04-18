@@ -31,7 +31,7 @@ const apiAuth = {
       if (isPasswordValid) {
         const token = jwt.sign(
           {
-            email: savedUser.email,
+            idUser: savedUser._id,
           },
           config.jwtSecret
         );
