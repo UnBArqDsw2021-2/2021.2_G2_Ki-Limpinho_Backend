@@ -2,19 +2,42 @@ const request = require("supertest");
 const httpStatus = require("http-status");
 const jwt = require("jsonwebtoken");
 const chai = require("chai");
-const expect = chai.expect;
 const app = require("../../index");
 const config = require("../../config/config");
+const mongoose = require('mongoose');
+const User = require("../user/user.model");
+const {before} = require("mocha");
 
+
+const expect = chai.expect;
 chai.config.includeStack = true;
 
+ let user = {
+  name: "Test",
+  email: "test@gmail.com",
+  cpf: "04604857192",
+  password: "123456",
+};
+/**
+ * root level hooks
+ */
+
+before(async () => {
+  await User.deleteMany({});
+  await User.create(user);
+});
+after((done) => {
+  mongoose.models = {};
+  mongoose.modelSchemas = {};
+  mongoose.connection.dropDatabase();
+  mongoose.connection.close();
+  done();
+});
+
+
+
 describe("## Auth APIs", () => {
-  let user = {
-    name: "Test",
-    email: "test@gmail.com",
-    cpf: "04604857192",
-    password: "123456",
-  };
+
 
   let notCreatedUserCredentials = {
     email: "notcreated@gmail.com",
@@ -33,23 +56,8 @@ describe("## Auth APIs", () => {
 
   let jwtToken;
 
-  describe("# POST /api/user", () => {
-    it("should create a new user", (done) => {
-      request(app)
-        .post("/api/user")
-        .send(user)
-        .expect(httpStatus.CREATED)
-        .then((res) => {
-          expect(res.body.name).to.equal(user.name);
-          expect(res.body.email).to.equal(user.email);
-          expect(res.body.cpf).to.equal(user.cpf);
-          expect(res.body.password).to.equal(user.password);
-          user = res.body;
-          done();
-        })
-        .catch(done);
-    });
-   
+  describe("# POST /api/auth/login", () => {
+
     it("should return Authentication error", (done) => {
       request(app)
         .post("/api/auth/login")
@@ -66,9 +74,9 @@ describe("## Auth APIs", () => {
       request(app)
         .post("/api/auth/login")
         .send(notCreatedUserCredentials)
-        .expect(httpStatus.BAD_REQUEST)
+        .expect(httpStatus.NOT_FOUND)
         .then((res) => {
-          expect(res.body.message).to.equal("Email não encontrado.");
+          expect(res.body.message).to.equal("Email não encontrado");
           done();
         })
         .catch(done);

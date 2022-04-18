@@ -1,7 +1,7 @@
 const User = require('./user.model');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
-const config = require('../../config/config');
+
 
 const apiUser = {
   /**
@@ -40,6 +40,7 @@ const apiUser = {
     });
     try {
       const result = await user.save();
+      result.password = undefined;
       res.status(httpStatus.CREATED).json(result);
     } catch (error) {
       next(new APIError(error.message, httpStatus.BAD_REQUEST));
@@ -47,7 +48,7 @@ const apiUser = {
   },
 
   async update(req, res, next) {
-    const _idUser = req.params.userId;
+    const _idUser = req.user.idUser;
     const updateFields = req.body;
 
       try {
