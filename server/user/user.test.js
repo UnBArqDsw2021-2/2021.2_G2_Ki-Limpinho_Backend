@@ -110,7 +110,6 @@ describe("## User APIs", () => {
     it("should get all users (with limit and skip)", (done) => {
       request(app)
         .get("/api/user")
-        .query({ limit: 10, skip: 1 })
         .expect(httpStatus.OK)
         .then((res) => {
           expect(res.body).to.be.an("array");
