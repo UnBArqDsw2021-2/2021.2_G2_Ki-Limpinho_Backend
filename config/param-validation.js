@@ -54,4 +54,16 @@ module.exports = {
       feedbackId: Joi.string().hex().required(),
     }).options({ abortEarly: false }),
   },
+
+  // POST /api/expenditures
+  createExpenditure: {
+    body: Joi.object({
+      amount: Joi.number().required(),
+      date: Joi.date().required(),
+      description: Joi.string().required(),
+      title: Joi.string().required(),
+      isFixed: Joi.boolean().required(),
+    }).options({ abortEarly: false }),
+  },
+  
 };
