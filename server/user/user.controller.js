@@ -84,9 +84,8 @@ const apiUser = {
       }
     }
 
-    if (req.query.campos) {
-      campos = req.query.campos.split(',');
-    }
+    if(req.query.campos && typeof(req.query.campos) === 'string') campos.push(req.query.campos)
+    else if(req.query.campos) campos = req.query.campos;
 
     try {
       result = await User.list({ pagina, tamanhoPagina, filtros, campos });

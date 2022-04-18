@@ -23,6 +23,16 @@ module.exports = {
       .options({ abortEarly: false }),
   },
 
+  // GET /api/user
+  listUsers: {
+    query: Joi.object({
+      pagina: Joi.number().min(0),
+      tamanhoPagina: Joi.number().min(1).max(100),
+      filtros: Joi.string(),
+      campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("name", "cpf", "email", "createdAt")) , Joi.string().valid("name", "cpf", "email", "createdAt"))
+    }).options({ abortEarly: false }),
+  },
+
   // POST /api/auth/login
   login: {
     body: Joi.object({
@@ -54,4 +64,25 @@ module.exports = {
       feedbackId: Joi.string().hex().required(),
     }).options({ abortEarly: false }),
   },
+
+  // POST /api/expenditures
+  createExpenditure: {
+    body: Joi.object({
+      amount: Joi.number().required(),
+      date: Joi.date().required(),
+      description: Joi.string().required(),
+      title: Joi.string().required(),
+      isFixed: Joi.boolean().required(),
+    }).options({ abortEarly: false }),
+  },
+
+  // GET /api/expenditures
+  listExpenditures: {
+    query: Joi.object({
+      pagina: Joi.number().min(0),
+      tamanhoPagina: Joi.number().min(1).max(100),
+      filtros: Joi.string(),
+      campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt")) , Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt"))
+    }).options({ abortEarly: false }),
+  }
 };
