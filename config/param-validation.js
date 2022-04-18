@@ -41,7 +41,7 @@ module.exports = {
     }).options({ abortEarly: false }),
   },
 
-  // POST /api/feedbacks
+  // POST /api/feedback
   createFeedback: {
     body: Joi.object({
       comment: Joi.string(),
@@ -50,7 +50,7 @@ module.exports = {
       ratingBy: Joi.string().required(),
     }).options({ abortEarly: false }),
   },
-  // PATCH /api/feedbacks/:feedbackId
+  // PATCH /api/feedback/:feedbackId
   updateFeedback: {
     body: Joi.object()
       .keys({
@@ -65,7 +65,7 @@ module.exports = {
     }).options({ abortEarly: false }),
   },
 
-  // POST /api/expenditures
+  // POST /api/expenditure
   createExpenditure: {
     body: Joi.object({
       amount: Joi.number().required(),
@@ -76,7 +76,7 @@ module.exports = {
     }).options({ abortEarly: false }),
   },
 
-  // GET /api/expenditures
+  // GET /api/expenditure
   listExpenditures: {
     query: Joi.object({
       pagina: Joi.number().min(0),
@@ -84,5 +84,30 @@ module.exports = {
       filtros: Joi.string(),
       campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt")) , Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt"))
     }).options({ abortEarly: false }),
-  }
+  },
+
+  // POST /api/service
+  createService: {
+    body: Joi.object({
+      brand: Joi.string().required(),
+      model: Joi.string().required(),
+      licensePlate: Joi.string().required(),
+      color: Joi.string(),
+      status: Joi.string(),
+      cleaning: Joi.boolean(),
+      flavoring: Joi.boolean(),
+      polishing: Joi.boolean(),
+      userId: Joi.string().hex().required(),
+    }).options({ abortEarly: false }),
+  },
+
+  // GET /api/service
+  listServices: {
+    query: Joi.object({
+      pagina: Joi.number().min(0),
+      tamanhoPagina: Joi.number().min(1).max(100),
+      filtros: Joi.string(),
+      campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("brand", "model", "color", "userId", "flavoring", "licensePlate", "polishing", "cleaning", "status", "createdAt")) , Joi.string().valid("brand", "model", "color", "userId", "flavoring", "licensePlate", "polishing", "cleaning", "status", "createdAt"))
+    }).options({ abortEarly: false }),
+  },
 };
