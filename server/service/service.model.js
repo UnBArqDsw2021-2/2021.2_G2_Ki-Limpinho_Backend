@@ -8,28 +8,28 @@ const ObjectId = mongoose.Types.ObjectId;
  * User Schema
  */
 const ServiceSchema = new mongoose.Schema({
-  marca: {
+  brand: {
     type: String,
     required: true
   },
 
-  UserId: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
 
-  modelo: {
+  model: {
     type: String,
     required: true,
   },
 
-  placa: {
+  licensePlate: {
     type: String,
     required: true
   },
 
-  cor: {
+  color: {
     type: String,
     required: true,
   },
@@ -38,22 +38,22 @@ const ServiceSchema = new mongoose.Schema({
     default: Date.now
   },
 
-  Status: {
+  status: {
     type: String,
     default: "Aguardando"
   },
 
-  Polimento : {
+  polishing : {
     type: Boolean,
     default: false
   },
 
-  Limpeza : {
+  cleaning : {
     type: Boolean,
     default: false
   },
 
-  Cheirinho : {
+  flavoring: {
     type: Boolean,
     default: false
   },
@@ -76,12 +76,6 @@ const ServiceSchema = new mongoose.Schema({
   next();
 });
 
-ServiceSchema.pre("findOneAndUpdate", function (next) {
-  now = new Date();
-  this.updateAt = now;
-  next();
-});
-
 /**
  * Methods
  */
@@ -93,7 +87,7 @@ ServiceSchema.pre("findOneAndUpdate", function (next) {
  ServiceSchema.statics = {
   /**
    * Get service
-   * @param {ObjectId} id - The objectId of service.
+   * @param {ObjectId} id - Service objectId.
    * @returns {Promise<Service, APIError>}
    */
   get(id) {
@@ -110,20 +104,17 @@ ServiceSchema.pre("findOneAndUpdate", function (next) {
       });
   },
 
-  
   /**
-   * Get all service by user
-   * @param {ObjectId} idUser - The objectId of service.
+   * Get services by user
+   * @param {ObjectId} userId - User objectId.
    * @returns {Promise<Service, APIError>}
    */
-
-
-  getByUser(idUser) {
-    return this.find({ UserId: idUser })
+  getServicesByUserId(userId) {
+    return this.find({ userId })
       .exec()
-      .then((service) => {
-        if (service) {
-          return service;
+      .then((services) => {
+        if (services) {
+          return services;
         }
         const err = new APIError(
           "No such service exists!",

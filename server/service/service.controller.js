@@ -1,74 +1,59 @@
 
 const Service = require("./service.model");
-const mongoose = require("mongoose");
 const httpStatus = require("http-status");
 const APIError = require("../helpers/APIError");
-const config = require("../../config/config");
-
-const ObjectId = mongoose.Types.ObjectId;
 
 const apiService = {
-
-   /**
-   * Load service and append to req.
-   */
-  load(req, res, next, id) {
-    Service.get(id)
-      .then((service) => {
-        req.service = service; // eslint-disable-line no-param-reassign
-        return next();
-      })
-      .catch(e => next(e));
-  },
   /**
-   * Get service
+   * Get service by Id
    * @returns {Service}
    */
   async get(req, res, next) {
-    const _idService = req.params.serviceId;
+    const _serviceId = req.params.serviceId;
 
     try {
-      const result = await Service.get(_idService);
+      const result = await Service.get(_serviceId);
       if (!result) {
-        throw new APIError("No service found", httpStatus.NOT_FOUND);
+        throw new APIError("Não foi encontrado nenhum serviço.", httpStatus.NOT_FOUND);
       }
       res.status(httpStatus.OK).json(result);
     } catch (err) {
-      next(new APIError(err.message, httpStatus.NOT_FOUND));
+      next(new APIError(err.message, httpStatus.BAD_REQUEST));
     }
   },
 
   /**
    * Create new service
-   * @property {string} req.body.marca - The marca of service.
-   * @property {string} req.body.placa - The placa of service.
-   * @property {string} req.body.modelo - The modelo of service.
-   * @property {string} req.body.UserId - The user of service.
-   * @property {string} req.body.cor - The cor of service.
-   * @property {string} req.body.Status - The Status of service.
-   * @property {Boolean} req.body.Polimento - The type of service.
-   * @property {Boolean} req.body.Limpeza - The type of service.
-   * @property {Boolean} req.body.Cheirinho - The type of service.
+   * @property {string} req.body.brand - The brand of service.
+   * @property {string} req.body.licensePlate - The license plate of service.
+   * @property {string} req.body.model - The model of service.
+   * @property {string} req.body.userId - The userId of service.
+   * @property {string} req.body.color - The color of service.
+   * @property {string} req.body.status - The status of service.
+   * @property {Boolean} req.body.polishing - If the service has polishing
+   * @property {Boolean} req.body.cleaning - If the service has cleaning
+   * @property {Boolean} req.body.flavoring - If the service has flavoring
    * @returns {Service}
    */
   async create(req, res, next) {
-    const { marca, UserId, modelo, placa,  cor , Status, Polimento, Limpeza, Cheirinho} = req.body;
+    const { brand, userId, model, licensePlate,  color , status, polishing, cleaning, flavoring} = req.body;
+
     const service = new Service({
-      marca: marca,
-      modelo: modelo,
-      placa: placa,
-      cor: cor,
-      Status: Status,
-      Limpeza: Limpeza,
-      Cheirinho: Cheirinho,
-      Polimento: Polimento,
-      UserId: ObjectId(UserId),
+      brand: brand,
+      model: model,
+      licensePlate: licensePlate,
+      color: color,
+      status: status,
+      polishing: polishing,
+      cleaning: cleaning,
+      flavoring: flavoring,
+      userId: userId,
     });
     try {
       const result = await service.save();
       res.status(httpStatus.CREATED).json(result);
     } catch (error) {
-      next(new APIError(error.message, httpStatus.NOT_FOUND));
+      next(new APIError(error.message, httpStatus.BAD_REQUEST));
     }
   },
 
@@ -98,9 +83,8 @@ const apiService = {
       }
     }
 
-    if (req.query.campos) {
-      campos = req.query.campos.split(",");
-    }
+    if(req.query.campos && typeof(req.query.campos) === 'string') campos.push(req.query.campos)
+    else if(req.query.campos) campos = req.query.campos;
 
     try {
       result = await Service.list({ pagina, tamanhoPagina, filtros, campos });
@@ -111,21 +95,16 @@ const apiService = {
     res.setHeader("X-Total-Count", result.count);
     res.status(httpStatus.OK).json(result.services);
   },
+
   /**
-   * Get by service
-   * param {string} req.params.serviceId - The service id.
-   * @returns {Service}
-   */
-  /**
-   * Get by user
+   * Get services by user id
    * @property {string} req.params.userId - The user id.
    * @returns {Service}
    */
-  async getByUser(req, res, next) {
-    const _idUser = req.params.userID;
-    let result = {};
+  async getServicesByUserId(req, res, next) {
+    const _userId = req.params.userId;
     try {
-      result = await Service.getByUser(_idUser);
+      let result = await Service.getServicesByUserId(_userId);
       res.status(httpStatus.OK).json(result);
     } catch (error) {
       next(new APIError(error.message));
