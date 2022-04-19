@@ -3,6 +3,8 @@ const httpStatus = require("http-status");
 const APIError = require("../helpers/APIError");
 const config = require("../../config/config");
 const User = require("../user/user.model");
+const bcrypt = require("bcrypt");
+
 
 const apiAuth = {
   /**
@@ -12,38 +14,49 @@ const apiAuth = {
    * @param next
    * @returns {*}
    */
-  async login(req, res, next) {
+   async login(req, res, next) {
     const userRequest = req.body;
     try {
-      const user = await User.find({ email: userRequest.email });
+      
+      const user = await User.find({ email: userRequest.email }).select("+password");
+      savedUser = user.shift();
+      if (!savedUser) {
+        throw new APIError("Email não encontrado", httpStatus.NOT_FOUND);
+      }
+      const isPasswordValid = await bcrypt.compare(userRequest.password, savedUser.password);
+      if (!isPasswordValid) {
+        throw new APIError("Senha incorreta.", httpStatus.UNAUTHORIZED);
+      }
 
-      if (userRequest.senha === user.senha) {
+      if (isPasswordValid) {
         const token = jwt.sign(
           {
-            email: user.email,
+            idUser: savedUser._id,
           },
           config.jwtSecret
         );
         return res.json({
           token,
-          user: user[0],
+          user: {
+            _id: savedUser._id,
+            name: savedUser.name,
+            email: savedUser.email,
+            cpf: savedUser.cpf,
+            createdAt: savedUser.createdAt,
+            isAdmin: savedUser.email === config.email,
+          },
         });
       }
-      const err = new APIError(
-        "Senha incorreta.",
-        httpStatus.UNAUTHORIZED,
-        true
-      );
-      return next(err);
+
     } catch (error) {
       const err = new APIError(
-        "Email não encontrado.",
-        httpStatus.NOT_FOUND,
+        error.message,
+        error.status,
         true
       );
       return next(err);
     }
-  },
+  }
 };
 
 module.exports = apiAuth;

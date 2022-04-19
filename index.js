@@ -1,28 +1,39 @@
-const mongoose = require('mongoose');
-const util = require('util');
-
+const mongoose = require("mongoose");
+const { MongoMemoryServer } = require("mongodb-memory-server");
+const util = require("util");
 // config should be imported before importing any other file
-const config = require('./config/config');
-const app = require('./config/express');
+const config = require("./config/config");
+const app = require("./config/express");
 
-const debug = require('debug')('express-mongoose-es6-rest-api:index');
+const debug = require("debug")("kilimpinho-backend:index");
 
 // make bluebird default Promise
-Promise = require('bluebird'); // eslint-disable-line no-global-assign
+Promise = require("bluebird"); // eslint-disable-line no-global-assign
 
 // plugin bluebird promise in mongoose
 mongoose.Promise = Promise;
-
+let mongoUri = config.mongo.host;
 // connect to mongo db
-const mongoUri = config.mongo.host;
-mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } });
-mongoose.connection.on('error', () => {
+(async () => {
+  if (config.env == "test") {
+    const mongod = new MongoMemoryServer();
+    await mongod.start();
+    mongoUri = mongod.getUri();
+  }
+  await mongoose.connect(mongoUri, {
+    maxPoolSize: 50,
+    wtimeoutMS: 2500,
+    useNewUrlParser: true,
+  });
+})();
+
+mongoose.connection.on("error", () => {
   throw new Error(`unable to connect to database: ${mongoUri}`);
 });
 
 // print mongoose logs in dev env
 if (config.mongooseDebug) {
-  mongoose.set('debug', (collectionName, method, query, doc) => {
+  mongoose.set("debug", (collectionName, method, query, doc) => {
     debug(`${collectionName}.${method}`, util.inspect(query, false, 20), doc);
   });
 }

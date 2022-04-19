@@ -1,7 +1,7 @@
 const User = require('./user.model');
 const httpStatus = require('http-status');
 const APIError = require('../helpers/APIError');
-const config = require('../../config/config');
+
 
 const apiUser = {
   /**
@@ -30,18 +30,25 @@ const apiUser = {
    * @property {string} req.body.mobileNumber - The mobileNumber of user.
    * @returns {User}
    */
-  async create(req, res, next) {
-    const user = new User(req.body);
+   async create(req, res, next) {
+    const { name, email, cpf, password } = req.body;
+    const user = new User({
+      name: name,
+      email: email,
+      cpf: cpf,
+      password: password,
+    });
     try {
       const result = await user.save();
+      result.password = undefined;
       res.status(httpStatus.CREATED).json(result);
     } catch (error) {
-      next(new APIError(error.message, httpStatus.NOT_FOUND));
+      next(new APIError(error.message, httpStatus.BAD_REQUEST));
     }
   },
 
   async update(req, res, next) {
-    const _idUser = req.params.userId;
+    const _idUser = req.user.idUser;
     const updateFields = req.body;
 
       try {
@@ -77,9 +84,8 @@ const apiUser = {
       }
     }
 
-    if (req.query.campos) {
-      campos = req.query.campos.split(',');
-    }
+    if(req.query.campos && typeof(req.query.campos) === 'string') campos.push(req.query.campos)
+    else if(req.query.campos) campos = req.query.campos;
 
     try {
       result = await User.list({ pagina, tamanhoPagina, filtros, campos });
