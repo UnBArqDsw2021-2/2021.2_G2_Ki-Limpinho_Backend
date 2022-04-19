@@ -40,7 +40,7 @@ cd 2021.2_G2_Ki-Limpinho_Backend
 
 Subindo o container docker:
 ```sh
-docker-compose up  kilimpinho-backend
+docker-compose up --build
 ```
 
 Executando os testes:
