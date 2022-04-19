@@ -24,30 +24,30 @@ const apiService = {
 
   /**
    * Create new service
-   * @property {string} req.body.brand - The brand of service.
-   * @property {string} req.body.licensePlate - The license plate of service.
-   * @property {string} req.body.model - The model of service.
-   * @property {string} req.body.userId - The userId of service.
-   * @property {string} req.body.color - The color of service.
+   * @property {string} req.body.marca - The marca of service.
+   * @property {string} req.body.placa - The license plate of service.
+   * @property {string} req.body.modelo - The modelo of service.
+   * @property {string} req.body.UserId - The UserId of service.
+   * @property {string} req.body.cor - The cor of service.
    * @property {string} req.body.status - The status of service.
-   * @property {Boolean} req.body.polishing - If the service has polishing
-   * @property {Boolean} req.body.cleaning - If the service has cleaning
-   * @property {Boolean} req.body.flavoring - If the service has flavoring
+   * @property {Boolean} req.body.polimento - If the service has polimento
+   * @property {Boolean} req.body.limpeza - If the service has limpeza
+   * @property {Boolean} req.body.cheirinho - If the service has cheirinho
    * @returns {Service}
    */
   async create(req, res, next) {
-    const { brand, userId, model, licensePlate,  color , status, polishing, cleaning, flavoring} = req.body;
+    const { marca, UserId, modelo, placa,  cor , status, polimento, limpeza, cheirinho} = req.body;
 
     const service = new Service({
-      brand: brand,
-      model: model,
-      licensePlate: licensePlate,
-      color: color,
+      marca: marca,
+      modelo: modelo,
+      placa: placa,
+      cor: cor,
       status: status,
-      polishing: polishing,
-      cleaning: cleaning,
-      flavoring: flavoring,
-      userId: userId,
+      polimento: polimento,
+      limpeza: limpeza,
+      cheirinho: cheirinho,
+      UserId: UserId,
     });
     try {
       const result = await service.save();
@@ -98,11 +98,11 @@ const apiService = {
 
   /**
    * Get services by user id
-   * @property {string} req.params.userId - The user id.
+   * @property {string} req.params.UserId - The user id.
    * @returns {Service}
    */
   async getServicesByUserId(req, res, next) {
-    const _userId = req.params.userId;
+    const _userId = req.params.UserId;
     try {
       let result = await Service.getServicesByUserId(_userId);
       res.status(httpStatus.OK).json(result);

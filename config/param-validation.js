@@ -89,15 +89,15 @@ module.exports = {
   // POST /api/service
   createService: {
     body: Joi.object({
-      brand: Joi.string().required(),
-      model: Joi.string().required(),
-      licensePlate: Joi.string().required(),
-      color: Joi.string(),
+      marca: Joi.string().required(),
+      modelo: Joi.string().required(),
+      placa: Joi.string().required(),
+      cor: Joi.string(),
       status: Joi.string(),
-      cleaning: Joi.boolean(),
-      flavoring: Joi.boolean(),
-      polishing: Joi.boolean(),
-      userId: Joi.string().hex().required(),
+      limpeza: Joi.boolean(),
+      cheirinho: Joi.boolean(),
+      polimento: Joi.boolean(),
+      UserId: Joi.string().hex().required(),
     }).options({ abortEarly: false }),
   },
 
@@ -107,7 +107,7 @@ module.exports = {
       pagina: Joi.number().min(0),
       tamanhoPagina: Joi.number().min(1).max(100),
       filtros: Joi.string(),
-      campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("brand", "model", "color", "userId", "flavoring", "licensePlate", "polishing", "cleaning", "status", "createdAt")) , Joi.string().valid("brand", "model", "color", "userId", "flavoring", "licensePlate", "polishing", "cleaning", "status", "createdAt"))
+      campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("marca", "modelo", "cor", "UserId", "cheirinho", "placa", "polimento", "limpeza", "status", "createdAt")) , Joi.string().valid("marca", "modelo", "cor", "UserId", "cheirinho", "placa", "polimento", "limpeza", "status", "createdAt"))
     }).options({ abortEarly: false }),
   },
 };

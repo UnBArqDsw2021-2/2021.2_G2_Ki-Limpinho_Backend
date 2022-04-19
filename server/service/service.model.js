@@ -8,28 +8,28 @@ const ObjectId = mongoose.Types.ObjectId;
  * User Schema
  */
 const ServiceSchema = new mongoose.Schema({
-  brand: {
+  marca: {
     type: String,
     required: true
   },
 
-  userId: {
+  UserId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
 
-  model: {
+  modelo: {
     type: String,
     required: true,
   },
 
-  licensePlate: {
+  placa: {
     type: String,
     required: true
   },
 
-  color: {
+  cor: {
     type: String,
     required: true,
   },
@@ -43,17 +43,17 @@ const ServiceSchema = new mongoose.Schema({
     default: "Aguardando"
   },
 
-  polishing : {
+  polimento : {
     type: Boolean,
     default: false
   },
 
-  cleaning : {
+  limpeza : {
     type: Boolean,
     default: false
   },
 
-  flavoring: {
+  cheirinho : {
     type: Boolean,
     default: false
   },
