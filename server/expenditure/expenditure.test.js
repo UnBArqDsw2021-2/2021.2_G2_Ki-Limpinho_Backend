@@ -3,7 +3,6 @@ const httpStatus = require('http-status');
 const request = require('supertest');
 const app = require('../../index');
 const chai = require('chai');
-const dummy = require('mongoose-dummy');
 const Expenditure = require("./expenditure.model");
 const { beforeEach } = require('mocha');
 
@@ -17,23 +16,23 @@ const ignoredFields = ['_id','created_at', '__v', /detail.*_info/];
  */
 let expenditures=[];
  for (var i=0; i<30; i++) {
-  expenditures.push(dummy(Expenditure,{
-    returnDate: true,
-    autoDetect: true,
-    ignore: ignoredFields,
-    
-  }));
+  expenditures.push({
+    amount: Math.floor(Math.random() * 100),
+    date: new Date(+(new Date()) - Math.floor(Math.random()*10000000000)),
+    description: "Teste",
+    title: "Teste",
+    isFixed: Math.random() < 0.5,
+  });
 }
 for (var i=0; i<20; i++) {
-  expenditures.push(dummy(Expenditure,{
-    returnDate: true,
-    autoDetect: true,
-    ignore: ignoredFields,
-    force:{
+  expenditures.push({
+      amount: Math.floor(Math.random() * 100),
+      description: "Teste",
+      title: "Teste",
       date: new Date("2020-05-1"),
       isFixed: true,
     }
-  }));
+  );
 }
 /** clear database and populate the database before all tests */
 beforeEach(async () => {
@@ -51,10 +50,14 @@ after((done) => {
 });
 
 describe('## Expenditure APIs', () => {
-    let expenditure = dummy(Expenditure, {
-      ignore: ignoredFields.concat(['createdAt', 'updatedAt']),
-      returnDate: true
-  })
+
+  let expenditure = {
+    amount: Math.floor(Math.random() * 100),
+    date: new Date(+(new Date()) - Math.floor(Math.random()*10000000000)),
+    description: "Teste",
+    title: "Teste",
+    isFixed: Math.random() < 0.5,
+  };
 
     describe('# POST /api/expenditure', () => {
         it("should create a new expenditure", (done) => {
