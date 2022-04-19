@@ -49,7 +49,7 @@
     "debug": "^4.3.4",
     "dotenv": "^16.0.0",
     "express": "4.17.3",
-    "express-jwt": "6.1.1",
+    "express-jwt": "^6.1.1",
     "express-validation": "3.0.8",
     "express-winston": "4.2.0",
     "helmet": "5.0.2",
@@ -58,26 +58,20 @@
     "jsonwebtoken": "8.5.1",
     "method-override": "^3.0.0",
     "mongoose": "6.2.9",
-    "mongoose-dummy": "^1.0.8",
     "morgan": "1.10.0",
     "winston": "3.6.0"
   },
   "devDependencies": {
     "chai": "4.3.6",
-    "commitizen": "^4.2.4",
-    "coveralls": "^3.1.1",
     "cross-env": "7.0.3",
-    "cz-conventional-changelog": "3.3.0",
     "eslint": "8.12.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-plugin-import": "2.25.4",
     "eslint-watch": "8.0.0",
     "husky": "7.0.4",
-    "istanbul": "1.1.0-alpha.1",
     "mocha": "9.2.2",
     "mongodb-memory-server": "^8.4.2",
-    "supertest": "6.2.2",
-    "validate-commit-msg": "^2.14.0"
+    "supertest": "6.2.2"
   },
   "license": "MIT",
   "config": {
