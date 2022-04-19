@@ -84,5 +84,20 @@ module.exports = {
       filtros: Joi.string(),
       campos: Joi.alternatives().try(Joi.array().items(Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt")) , Joi.string().valid("amount", "date", "description", "title", "isFixed", "createdAt"))
     }).options({ abortEarly: false }),
-  }
+  },
+
+    // POST /api/expenditures
+    createService: {
+      body: Joi.object({
+        marca: Joi.string().required(),
+        modelo: Joi.string().required(),
+        placa: Joi.string().required(),
+        cor: Joi.string(),
+        Status: Joi.string(),
+        Limpeza: Joi.boolean(),
+        Cheirinho: Joi.boolean(),
+        Polimento: Joi.boolean(),
+        UserId: Joi.string().required(),
+      }).options({ abortEarly: false }),
+    },
 };
